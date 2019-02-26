@@ -15,8 +15,7 @@ Gem::Specification.new do |s|
 
   s.files = `git ls-files`.split("\n")
 
-  s.add_dependency 'activerecord', '>= 4.0', '< 5.3'
-  s.add_dependency 'activesupport', '>= 4.0', '< 5.3'
+  s.add_runtime_dependency 'rails', '>= 5.0'
 
   s.add_development_dependency 'appraisal'
   s.add_development_dependency 'database_cleaner'

@@ -8,7 +8,6 @@ RAILS_VERSIONS = %w[
 
 RAILS_VERSIONS.each do |version|
   appraise "rails_#{version}" do
-    gem 'activerecord', version
-    gem 'activesupport', version
+    gem 'rails', version
   end
 end
