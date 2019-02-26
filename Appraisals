@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 RAILS_VERSIONS = %w(
-  4.2.10
-  5.0.6
-  5.1.4
-  5.2.0.beta2
+  4.2.11
+  5.0.7
+  5.1.6
+  5.2.2
 )
 
 RAILS_VERSIONS.each do |version|
