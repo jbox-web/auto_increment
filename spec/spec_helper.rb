@@ -1,6 +1,3 @@
-require 'coveralls'
-Coveralls.wear!
-
 require 'pry'
 require 'auto_increment'
 require 'database_cleaner'
