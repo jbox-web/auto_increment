@@ -1,6 +1,4 @@
 require 'spec_helper'
-require 'models/account'
-require 'models/user'
 
 describe AutoIncrement do
   before :all do

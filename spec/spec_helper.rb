@@ -5,13 +5,13 @@ SimpleCov.start do
   add_filter 'spec/'
 end
 
-require 'pry'
-require 'auto_increment'
+# Load Rails dummy app
+ENV['RAILS_ENV'] = 'test'
+require File.expand_path('dummy/config/environment.rb', __dir__)
+
+# Load test gems
+require 'rspec/rails'
 require 'database_cleaner'
 
-ActiveRecord::Base.establish_connection adapter: 'sqlite3',
-                                        database: 'spec/db/sync.db',
-                                        timeout: 5000
-
-# require 'support/active_record'
-require 'support/database_cleaner'
+# Load our own config
+require_relative 'config_rspec'
