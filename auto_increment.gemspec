@@ -4,7 +4,7 @@ require_relative 'lib/auto_increment/version'
 
 Gem::Specification.new do |s|
   s.name        = 'auto_increment'
-  s.version     = AutoIncrement::VERSION
+  s.version     = AutoIncrement::VERSION::STRING
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Felipe Diesel']
   s.email       = ['felipediesel@gmail.com']
