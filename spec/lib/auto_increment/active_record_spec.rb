@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AutoIncrement do
+describe AutoIncrement::ActiveRecord do
   before :all do
     @account1 = Account.create name: 'My Account'
     @account2 = Account.create name: 'Another Account', code: 50
