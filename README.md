@@ -1,44 +1,58 @@
-# auto_increment
+# AutoIncrement
 
-[![Build Status](https://travis-ci.org/felipediesel/auto_increment.svg?branch=master)](https://travis-ci.org/felipediesel/auto_increment)
-[![Coverage Status](https://coveralls.io/repos/felipediesel/auto_increment/badge.svg?branch=master)](https://coveralls.io/r/felipediesel/auto_increment?branch=master)
-[![Code Climate](https://codeclimate.com/github/felipediesel/auto_increment/badges/gpa.svg)](https://codeclimate.com/github/felipediesel/auto_increment)
+[![GitHub license](https://img.shields.io/github/license/jbox-web/auto_increment.svg)](https://github.com/jbox-web/auto_increment/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/jbox-web/auto_increment.svg)](https://github.com/jbox-web/auto_increment/releases/latest)
+[![Build Status](https://travis-ci.org/jbox-web/auto_increment.svg?branch=master)](https://travis-ci.org/jbox-web/auto_increment)
 
-auto_increment provides automatic incrementation for a integer or string fields in Rails.
+AutoIncrement provides automatic incrementation for a integer or string fields in Rails.
 
 ## Installation
 
-You can use auto_increment as a gem from Rails 4.2 to Rails 5.2-beta2.
+Put this in your `Gemfile` :
 
-To use the gem version, put the following gem requirement in your `Gemfile`:
+```ruby
+git_source(:github){ |repo_name| "https://github.com/#{repo_name}.git" }
 
-    gem "auto_increment"
+gem 'auto_increment', github: 'jbox-web/auto_increment', tag: '1.6.0'
+```
+
+then run `bundle install`.
 
 
 ## Usage
 
 To work with a auto increment column you used to do something like this in your model:
 
-    before_create :set_code
-    def set_code
-      max_code = Operation.maximum(:code)
-      self.code = max_code.to_i + 1
-    end
+```ruby
+  before_create :set_code
+  def set_code
+    max_code = Operation.maximum(:code)
+    self.code = max_code.to_i + 1
+  end
+```
 
 Looks fine, but not when you need to do it over and over again. In fact auto_increment does it under the cover.
 
 All you need to do is this:
 
-    auto_increment :code
+```ruby
+class Project < ApplicationRecord
+  auto_increment :code
+end
+```
 
-And your code field will be incremented
+And your code field will be incremented :)
 
 
 ## Customizing
 
 So you have a different column or need a scope. auto_increment provides options. You can use it like this:
 
-    auto_increment :letter, scope: [:account_id, :job_id], model_scope: :in_account, initial: 'C', force: true, lock: false, before: :create
+```ruby
+class Project < ApplicationRecord
+  auto_increment :letter, scope: [:account_id, :job_id], model_scope: :in_account, initial: 'C', force: true, lock: false, before: :create
+end
+```
 
 First argument is the column that will be incremented. Can be integer or string.
 
@@ -48,12 +62,3 @@ First argument is the column that will be incremented. Can be integer or string.
 * force: you can set a value before create and auto_increment will not change that, but if you do want this, set force to true (default: false)
 * lock: you can set a lock on the max query. (default: false)
 * before: you can choose a different callback to be used (:create, :save, :validation) (default: create)
-
-
-## Compatibility
-
-Tested with Rails 4.2, 5, 5.1 and 5.2-beta2 in Ruby 2.4.3 and 2.5.0.
-
-## License
-
-MIT License
