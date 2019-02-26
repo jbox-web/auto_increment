@@ -1,3 +1,10 @@
+require 'simplecov'
+
+# Start SimpleCov
+SimpleCov.start do
+  add_filter 'spec/'
+end
+
 require 'pry'
 require 'auto_increment'
 require 'database_cleaner'
