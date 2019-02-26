@@ -5,7 +5,7 @@ module AutoIncrement
 
     initializer 'auto_increment.initialize' do
       ActiveSupport.on_load(:active_record) do
-        extend Royce::Macros
+        extend AutoIncrement::ActiveRecord
       end
     end
 
