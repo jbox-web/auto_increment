@@ -15,7 +15,7 @@ Put this in your `Gemfile` :
 ```ruby
 git_source(:github){ |repo_name| "https://github.com/#{repo_name}.git" }
 
-gem 'auto_increment', github: 'jbox-web/auto_increment', tag: '1.6.0'
+gem 'auto_increment', github: 'jbox-web/auto_increment', tag: '1.7.0'
 ```
 
 then run `bundle install`.
