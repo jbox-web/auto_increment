@@ -1,5 +1,13 @@
 ## CHANGELOG
 
+### 1.8.0 - 2020-04-04
+
+* Add support of Ruby 2.7
+* Add support of Rails 6.x
+* Add binstubs to ease development
+
+* This is the last version to support Ruby 2.4.x
+
 ### 1.7.0 - 2019-02-26
 
 * Add support of Ruby 2.6
