@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = 'Automaticaly increments a string or integer field in ActiveRecord.'
   s.license     = 'MIT'
 
-  s.required_ruby_version = '>= 2.6.0'
+  s.required_ruby_version = '>= 2.7.0'
 
   s.files = `git ls-files`.split("\n")
 
