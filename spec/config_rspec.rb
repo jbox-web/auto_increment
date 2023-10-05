@@ -1,3 +1,4 @@
+# Configure RSpec
 RSpec.configure do |config|
   # Use DB agnostic schema by default
   load Rails.root.join('db', 'schema.rb').to_s
