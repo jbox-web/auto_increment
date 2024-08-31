@@ -11,7 +11,7 @@ AllCops:
   Exclude:
     - bin/*
     - gemfiles/*
-    - spec/**/*
+    - spec/dummy/**/*
 
 Gemspec/RequireMFA:
   Enabled: false
@@ -43,4 +43,11 @@ Layout/EmptyLinesAroundBlockBody:
   Enabled: false
 
 Layout/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+#########
+# RSPEC #
+#########
+
+RSpec/InstanceVariable:
   Enabled: false

@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe AutoIncrement::ActiveRecord do
-  before :all do
+  before :all do # rubocop:disable RSpec/BeforeAfterAll
     @account1 = Account.create name: 'My Account'
     @account2 = Account.create name: 'Another Account', code: 50
 
@@ -29,7 +31,7 @@ describe AutoIncrement::ActiveRecord do
   end
 
   describe 'locks query for increment' do
-    before :all do
+    before :all do # rubocop:disable RSpec/BeforeAfterAll
       threads = []
       lock = Mutex.new
       @account = Account.create name: 'Another Account', code: 50
@@ -47,7 +49,7 @@ describe AutoIncrement::ActiveRecord do
     end
 
     let(:account_last_letter_code) do
-      @accounts.sort_by(&:letter_code).last.letter_code
+      @accounts.sort_by(&:letter_code).last.letter_code # rubocop:disable Style/RedundantSort
     end
 
     it { expect(@accounts.size).to eq 25 }
