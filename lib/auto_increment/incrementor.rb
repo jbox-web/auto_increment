@@ -61,9 +61,7 @@ module AutoIncrement
 
     def build_scopes(query)
       @options[:scope].each do |scope|
-        if scope.present? && @record.respond_to?(scope)
-          query = query.where(scope => @record.send(scope))
-        end
+        query = query.where(scope => @record.send(scope)) if scope.present? && @record.respond_to?(scope)
       end
 
       query
@@ -71,7 +69,7 @@ module AutoIncrement
 
 
     def build_model_scope(query)
-      @options[:model_scope].reject(&:nil?).each do |scope|
+      @options[:model_scope].compact.each do |scope|
         query = query.send(scope)
       end
 
@@ -85,7 +83,7 @@ module AutoIncrement
 
 
     def string?
-      @options[:initial].class == String
+      @options[:initial].is_a?(String)
     end
 
   end
