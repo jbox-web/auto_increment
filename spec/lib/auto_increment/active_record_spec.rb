@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe AutoIncrement::ActiveRecord do
+RSpec.describe AutoIncrement::ActiveRecord do
   before :all do # rubocop:disable RSpec/BeforeAfterAll
     @account1 = Account.create name: 'My Account'
     @account2 = Account.create name: 'Another Account', code: 50

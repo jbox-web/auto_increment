@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe AutoIncrement::Incrementor do
+RSpec.describe AutoIncrement::Incrementor do
   {
     nil => 1,
     0 => 1,
