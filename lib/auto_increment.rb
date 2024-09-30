@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
+# require external dependencies
 require 'zeitwerk'
-loader = Zeitwerk::Loader.for_gem
-loader.setup
+
+# load zeitwerk
+Zeitwerk::Loader.for_gem.tap do |loader| # rubocop:disable Style/SymbolProc
+  loader.setup
+end
 
 module AutoIncrement
-  require 'auto_increment/engine' if defined?(Rails)
+  require_relative 'auto_increment/engine' if defined?(Rails)
 end
