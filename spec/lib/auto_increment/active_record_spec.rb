@@ -57,8 +57,11 @@ RSpec.describe AutoIncrement::ActiveRecord do
   end
 
   describe 'set before validation' do
-    account3 = Account.new
-    account3.valid?
+    let(:account3) do
+      account3 = Account.new
+      account3.valid?
+      account3
+    end
 
     it { expect(account3.code).not_to be_nil }
   end
