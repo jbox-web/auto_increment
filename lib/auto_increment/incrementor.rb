@@ -17,9 +17,11 @@ module AutoIncrement
     end
 
 
+    # This Incrementor instance is registered once as a callback object and is
+    # therefore SHARED by every record of the model, across threads. It must
+    # keep no per-record state — the record is threaded through as an argument.
     def before_create(record)
-      @record = record
-      write if can_write?
+      write(record) if can_write?(record)
     end
 
     alias before_validation before_create
@@ -29,29 +31,31 @@ module AutoIncrement
     private
 
 
-    def write
-      @record.send(:write_attribute, @column, increment)
+    def write(record)
+      record.send(:write_attribute, @column, increment(record))
     end
 
 
-    def can_write?
-      @record.send(@column).blank? || @options[:force]
+    def can_write?(record)
+      record.send(@column).blank? || @options[:force]
     end
 
 
-    def increment
-      max = maximum
+    def increment(record)
+      max = maximum(record)
       max.blank? ? @options[:initial] : max.next
     end
 
 
-    def maximum
-      query = build_scopes(build_model_scope(@record.class))
-      query.lock if lock?
+    def maximum(record)
+      query = build_scopes(build_model_scope(record.class), record)
+      # Relation#lock returns a NEW relation, so its result must be kept.
+      query = query.lock if lock?
 
       if string?
-        query.select("#{@column} max")
-             .order(Arel.sql("LENGTH(#{@column}) DESC, #{@column} DESC"))
+        column = record.class.connection.quote_column_name(@column)
+        query.select("#{column} max")
+             .order(Arel.sql("LENGTH(#{column}) DESC, #{column} DESC"))
              .first.try(:max)
       else
         query.maximum(@column)
@@ -59,9 +63,9 @@ module AutoIncrement
     end
 
 
-    def build_scopes(query)
+    def build_scopes(query, record)
       @options[:scope].each do |scope|
-        query = query.where(scope => @record.send(scope)) if scope.present? && @record.respond_to?(scope)
+        query = query.where(scope => record.send(scope)) if scope.present? && record.respond_to?(scope)
       end
 
       query

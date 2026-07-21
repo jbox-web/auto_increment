@@ -62,5 +62,13 @@ First argument is the column that will be incremented. Can be integer or string.
 * **model_scope:** you can define model scopes that will be executed and you can use as many as you want (default: nil)
 * **initial:** initial value of column (default: 1)
 * **force:** you can set a value before create and auto_increment will not change that, but if you do want this, set force to true (default: false)
-* **lock:** you can set a lock on the max query. (default: false)
-* **before:** you can choose a different callback to be used (:create, :save, :validation) (default: create)
+* **lock:** wraps the max query in `SELECT ... FOR UPDATE` (within the save transaction) to serialize concurrent increments. (default: false)
+* **before:** you can choose a different callback to be used (:create, :save, :validation) (default: create). Note that `:save` also runs on updates.
+
+### Concurrency
+
+The value is computed by reading the current maximum and adding one, so two
+concurrent inserts can still race. `lock: true` mitigates this on databases that
+support row locking, but for a hard guarantee add a **unique database index** on
+the incremented column (scoped columns included) as a backstop — the gem does
+not create one for you.

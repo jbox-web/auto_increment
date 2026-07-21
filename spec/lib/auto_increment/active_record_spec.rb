@@ -30,30 +30,22 @@ RSpec.describe AutoIncrement::ActiveRecord do
     it { expect(@user1_account1.letter_code).to eq 'A' }
   end
 
-  describe 'locks query for increment' do
+  # NOTE: SQLite serializes writers, so true concurrency can't be exercised
+  # reliably here; the isolation/lock guarantees are covered deterministically in
+  # incrementor_spec. This checks the increment stays gapless and duplicate-free
+  # within a scope. (The previous version wrapped every thread in a Mutex, which
+  # serialized all work and so never tested concurrency at all.)
+  describe 'increments without gaps or duplicates within a scope' do
     before :all do # rubocop:disable RSpec/BeforeAfterAll
-      threads = []
-      lock = Mutex.new
-      @account = Account.create name: 'Another Account', code: 50
-      @accounts = []
-      5.times do |_t|
-        threads << Thread.new do
-          lock.synchronize do
-            5.times do |_thr|
-              @accounts << (@account.users.create name: 'Daniel')
-            end
-          end
-        end
-      end
-      threads.each(&:join)
+      @account = Account.create name: 'Sequenced Account', code: 50
+      @accounts = Array.new(25) { @account.users.create name: 'Daniel' }
     end
 
-    let(:account_last_letter_code) do
-      @accounts.sort_by(&:letter_code).last.letter_code # rubocop:disable Style/RedundantSort
-    end
+    let(:letter_codes) { @accounts.map(&:letter_code) }
 
     it { expect(@accounts.size).to eq 25 }
-    it { expect(account_last_letter_code).to eq 'Y' }
+    it { expect(letter_codes.uniq.size).to eq 25 }
+    it { expect(letter_codes.max).to eq 'Y' }
   end
 
   describe 'set before validation' do

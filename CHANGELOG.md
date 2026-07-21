@@ -1,5 +1,13 @@
 ## CHANGELOG
 
+### Unreleased
+
+* Fix `lock: true` being a no-op (the locked relation returned by `Relation#lock` was discarded)
+* Fix shared callback-object state: the record is now threaded through instead of stored in `@record`, avoiding cross-record corruption under concurrent creates
+* Quote the incremented column name in the string-max query
+* Document concurrency semantics and the need for a unique index
+* Modernize support matrix: Ruby >= 3.2, Rails >= 7.0 (drops Ruby < 3.2 and Rails < 7.0)
+
 ### 1.8.0 - 2020-04-04
 
 * Add support of Ruby 2.7
