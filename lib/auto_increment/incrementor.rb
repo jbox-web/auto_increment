@@ -41,6 +41,9 @@ module AutoIncrement
     end
 
 
+    # `.next` is polymorphic: Integer#next adds one, String#next advances
+    # lexicographically with carry ('Z' => 'AA'). An empty table falls back to
+    # `initial`.
     def increment(record)
       max = maximum(record)
       max.blank? ? @options[:initial] : max.next
@@ -52,6 +55,9 @@ module AutoIncrement
       # Relation#lock returns a NEW relation, so its result must be kept.
       query = query.lock if lock?
 
+      # String columns can't use SQL MAX: lexicographically 'Z' outranks 'AA',
+      # yet 'AA' is the real successor (see String#next in `increment`). Ordering
+      # by LENGTH first, then value, yields the true maximum of that sequence.
       if string?
         column = record.class.connection.quote_column_name(@column)
         query.select("#{column} max")
@@ -86,6 +92,10 @@ module AutoIncrement
     end
 
 
+    # The value type is inferred from `initial`, NOT the column type: a String
+    # `initial` selects the string path (lexicographic max + String#next), any
+    # other value the integer path (SQL MAXIMUM). So a string column left with
+    # the default integer `initial` is incremented numerically.
     def string?
       @options[:initial].is_a?(String)
     end
