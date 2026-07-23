@@ -72,16 +72,26 @@ RSpec.describe AutoIncrement::Incrementor do
   # multiple entries are honored.
   describe 'scope option normalization' do
     it 'wraps a single scope value into an Array' do
-      incrementor = described_class.new(:code, scope: :account_id, model_scope: :with_mark)
+      incrementor = described_class.new(:code, scope: :account_id)
 
       expect(incrementor.instance_variable_get(:@options)[:scope]).to eq [:account_id]
+    end
+
+    it 'wraps a single model_scope value into an Array' do
+      incrementor = described_class.new(:code, model_scope: :with_mark)
+
       expect(incrementor.instance_variable_get(:@options)[:model_scope]).to eq [:with_mark]
     end
 
     it 'keeps an Array scope verbatim' do
-      incrementor = described_class.new(:code, scope: %i[account_id kind], model_scope: %i[with_mark active])
+      incrementor = described_class.new(:code, scope: %i[account_id kind])
 
       expect(incrementor.instance_variable_get(:@options)[:scope]).to eq %i[account_id kind]
+    end
+
+    it 'keeps an Array model_scope verbatim' do
+      incrementor = described_class.new(:code, model_scope: %i[with_mark active])
+
       expect(incrementor.instance_variable_get(:@options)[:model_scope]).to eq %i[with_mark active]
     end
   end
