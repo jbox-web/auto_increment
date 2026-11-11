@@ -29,9 +29,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
-
-      - name: Bundler
-        run: bundle install
+          bundler-cache: true
 
       - name: Rubocop
         run: bin/rubocop
@@ -66,6 +64,65 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Run RSpec
+        run: bin/rspec
+
+      # One cell only: the other 11 would upload the same SQLite coverage for the
+      # same commit. The PostgreSQL job uploads too, because neither adapter can
+      # reach 100 % on its own — SQLite never runs the advisory-lock code, and
+      # PostgreSQL never takes the non-PostgreSQL early return. The published figure
+      # is the union of the two.
+      - name: Publish code coverage
+        if: matrix.ruby == '3.4' && matrix.rails == 'rails_8.1'
+        uses: qltysh/qlty-action/coverage@v2
+        with:
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: coverage/coverage.json
+
+  # The gem emits SQL that is not portable by accident: `FOR UPDATE`, `LENGTH()`
+  # and NULL ordering under `ORDER BY ... DESC` all behave differently across
+  # adapters, and SQLite's Arel visitor silently drops lock clauses. A
+  # SQLite-only matrix is therefore green on defects that break PostgreSQL, so
+  # one PostgreSQL cell is what makes the suite meaningful — not a nicety.
+  rspec_postgresql:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          # Created by the service itself, so the job needs no `createdb` and
+          # therefore no postgresql-client on the runner image.
+          POSTGRES_DB: auto_increment_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/rails_8.1.gemfile
+      DATABASE_ADAPTER: postgresql
+      DATABASE_HOST: localhost
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
           bundler-cache: true
 
       - name: Run RSpec

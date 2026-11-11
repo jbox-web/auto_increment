@@ -1,8 +1,39 @@
----
-development:
-  adapter: sqlite3
-  database: db/development.sqlite3
+<%#
+  The adapter is selected by DATABASE_ADAPTER so the suite can be run against
+  every backend the gem emits SQL for. It matters: the incrementor's SQL is not
+  portable by accident — NULL ordering under `ORDER BY ... DESC` differs between
+  PostgreSQL and SQLite, and SQLite's Arel visitor silently drops lock clauses.
+  A SQLite-only suite is therefore green on defects that break PostgreSQL.
 
-test:
-  adapter: sqlite3
-  database: db/test.sqlite3
+  The whole document is emitted from a single ERB expression on purpose. Rails
+  compiles this file by appending `;` after every ERB tag, which breaks a
+  `case`/`when` spread across several tags — and passing PostgreSQL connection
+  keys to the SQLite3 adapter is not harmless, so the two key sets must never be
+  emitted together.
+%>
+<%=
+  adapter = ENV.fetch('DATABASE_ADAPTER', 'sqlite3')
+
+  base =
+    if adapter == 'postgresql'
+      {
+        'adapter'  => 'postgresql',
+        'encoding' => 'unicode',
+        'pool'     => 5,
+        'host'     => ENV.fetch('DATABASE_HOST', 'localhost'),
+        'username' => ENV.fetch('DATABASE_USERNAME', ENV.fetch('USER', 'postgres')),
+        'password' => ENV.fetch('DATABASE_PASSWORD', '')
+      }
+    else
+      { 'adapter' => 'sqlite3', 'pool' => 5, 'timeout' => 5000 }
+    end
+
+  names =
+    if adapter == 'postgresql'
+      { 'development' => 'auto_increment_development', 'test' => 'auto_increment_test' }
+    else
+      { 'development' => 'db/development.sqlite3', 'test' => 'db/test.sqlite3' }
+    end
+
+  YAML.dump(names.transform_values { |db| base.merge('database' => db) })
+%>
