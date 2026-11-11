@@ -12,6 +12,10 @@ AllCops:
     - bin/*
     - gemfiles/*
     - spec/dummy/**/*
+    # Restated because this list replaces RuboCop's default Exclude instead of
+    # merging with it: without it, `bundler-cache: true` in CI installs gems into
+    # vendor/bundle and RuboCop walks into them, loading their own .rubocop.yml.
+    - vendor/**/*
 
 #########
 # STYLE #
