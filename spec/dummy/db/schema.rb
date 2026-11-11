@@ -23,4 +23,13 @@ ActiveRecord::Schema.define(version: 2013_10_30_014902) do
     t.string "letter_code"
   end
 
+  # Fixture table for the adapter-sensitive integration specs. Kept separate
+  # from "users" on purpose: User carries a default_scope, which is itself one of
+  # the behaviors under test, so it cannot double as a neutral fixture.
+  create_table "sequences", force: :cascade do |t|
+    t.string "code"
+    t.integer "number"
+    t.integer "scope_id"
+  end
+
 end

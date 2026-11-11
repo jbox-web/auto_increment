@@ -46,5 +46,7 @@ Layout/EmptyLinesAroundModuleBody:
 # RSPEC #
 #########
 
-RSpec/InstanceVariable:
-  Enabled: false
+# RSpec/InstanceVariable used to be disabled for the before(:all) fixtures in
+# active_record_spec. Those rows escaped DatabaseCleaner's per-example transaction
+# and survived the whole run, so they were moved to `let!` — and the cop is now
+# enforced rather than silenced.
