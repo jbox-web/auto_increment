@@ -13,9 +13,6 @@ AllCops:
     - gemfiles/*
     - spec/dummy/**/*
 
-Gemspec/RequireMFA:
-  Enabled: false
-
 #########
 # STYLE #
 #########

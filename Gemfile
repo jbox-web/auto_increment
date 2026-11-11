@@ -7,6 +7,10 @@ gemspec
 # Dev libs
 gem 'appraisal', git: 'https://github.com/thoughtbot/appraisal.git'
 gem 'database_cleaner'
+gem 'pg'
+# The gem itself only depends on activerecord + railties; the dummy app under
+# spec/dummy does `require "rails/all"`, so the full framework is a DEV dependency.
+gem 'rails'
 gem 'rake'
 gem 'rspec-rails'
 gem 'simplecov'
